@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/netip"
+	"strings"
 
 	"github.com/favonia/cloudflare-ddns/internal/ipnet"
 	"github.com/favonia/cloudflare-ddns/internal/pp"
@@ -17,6 +18,7 @@ func getIPFromHTTP(ctx context.Context, ppfmt pp.PP, url string) (netip.Addr, bo
 		requestBody:       nil,
 		extract: func(_ pp.PP, body []byte) (netip.Addr, bool) {
 			ipString := string(body)
+			ipString = strings.TrimSpace(ipString)
 			ip, err := netip.ParseAddr(ipString)
 			if err != nil {
 				ppfmt.Errorf(pp.EmojiImpossible, `Failed to parse the IP address in the response of %q: %s`, url, ipString)
